@@ -1,0 +1,544 @@
+{
+	"info": {
+		"name": "Final Tests",
+		"_postman_id": "70671ef0-07a8-7d9b-3dfd-290f209e7344",
+		"description": "Testing the boats and slips",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create a boat",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "05e7b48d-a1f6-4489-be90-cabf4022bbe7",
+						"type": "text/javascript",
+						"exec": [
+							"pm.sendRequest(\"https://auth-195701.appspot.com/boats\", function (err, response) {",
+							"    console.log(response.json());",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "51ccb02d-f089-49dc-9d80-75828005dc6d",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Creating ID variable\", function () {",
+							"    output = pm.response.text().split(\".\");",
+							"    myJSON = JSON.parse(output.slice(1));",
+							"    pm.environment.set(\"newBoat\", myJSON.id);",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"Boaty McBoatface\",\n\t\"type\":\"Research Vessel\",\n\t\"length\":10,\n\t\"token\":\"{{workingToken}}\"\n}"
+				},
+				"url": {
+					"raw": "https://auth-195701.appspot.com/boats",
+					"protocol": "https",
+					"host": [
+						"auth-195701",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"boats"
+					]
+				},
+				"description": "Creating a boat. Also tests the GET /boats function during testing."
+			},
+			"response": []
+		},
+		{
+			"name": "Get new boat",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c29af9f5-426b-4595-bea0-c5aeabfe193c",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://auth-195701.appspot.com/boats/{{newBoat}}",
+					"protocol": "https",
+					"host": [
+						"auth-195701",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"boats",
+						"{{newBoat}}"
+					]
+				},
+				"description": "Looking at our new boat"
+			},
+			"response": []
+		},
+		{
+			"name": "Edit a boat",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "5d07792a-5199-41b8-9e65-d53e401cf446",
+						"type": "text/javascript",
+						"exec": [
+							"pm.sendRequest(\"https://auth-195701.appspot.com/boats/\"+pm.environment.get(\"newBoat\"), function (err, response) {",
+							"    console.log(response.json());",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "586ef9ce-6c56-45f7-8202-a8ce34c34b91",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Test correct patch\", function () {",
+							"    output = pm.response.text().split(\".\");",
+							"    myJSON = JSON.parse(output.slice(1));",
+							"    pm.expect(myJSON.length).to.eql(120);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"Boaty McBoatface\",\n\t\"type\":\"Research Vessel\",\n\t\"length\":120,\n\t\"token\":\"{{workingToken}}\"\n}"
+				},
+				"url": {
+					"raw": "https://auth-195701.appspot.com/boats/{{newBoat}}",
+					"protocol": "https",
+					"host": [
+						"auth-195701",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"boats",
+						"{{newBoat}}"
+					]
+				},
+				"description": "Edits the boat added earlier in Create a boat\n\nExpected result: Boaty Mcboatface grows from 10 length to 120 length. Check the postman console to see results.\n\nTesting for this function also tests the GET /boats/{boat id} function."
+			},
+			"response": []
+		},
+		{
+			"name": "Create a slip",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4255f285-be11-4993-a12e-bf9fea40d29f",
+						"type": "text/javascript",
+						"exec": [
+							"pm.sendRequest(\"https://boats-194217.appspot.com/slips\", function (err, response) {",
+							"    console.log(response.json());",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8b2b46f9-0076-4e8b-9a10-ece1ac28616d",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Creating ID variable\", function () {",
+							"    output = pm.response.text().split(\".\");",
+							"    myJSON = JSON.parse(output.slice(1));",
+							"    pm.environment.set(\"newSlip\", myJSON.id);",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"number\":1,\n\t\"token\":\"{{workingToken}}\"\n}"
+				},
+				"url": {
+					"raw": "https://auth-195701.appspot.com/slips",
+					"protocol": "https",
+					"host": [
+						"auth-195701",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"slips"
+					]
+				},
+				"description": "Creating a slip. Also tests the GET /slips function during testing."
+			},
+			"response": []
+		},
+		{
+			"name": "Get new slip",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c29af9f5-426b-4595-bea0-c5aeabfe193c",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://auth-195701.appspot.com/slips/{{newSlip}}",
+					"protocol": "https",
+					"host": [
+						"auth-195701",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"slips",
+						"{{newSlip}}"
+					]
+				},
+				"description": "Looking at our new slip"
+			},
+			"response": []
+		},
+		{
+			"name": "Edit a slip",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "bc4a0d77-ab18-4519-8e40-f1e3e420986c",
+						"type": "text/javascript",
+						"exec": [
+							"pm.sendRequest(\"https://auth-195701.appspot.com/slips/\"+pm.environment.get(\"newSlip\"), function (err, response) {",
+							"    console.log(response.json());",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "f306012c-0d58-4f43-baf3-4c695070d06b",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Test correct patch\", function () {",
+							"    output = pm.response.text().split(\".\");",
+							"    myJSON = JSON.parse(output.slice(1));",
+							"    pm.expect(myJSON.number).to.eql(12);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"number\":12,\n\t\"token\":\"{{workingToken}}\"\n}"
+				},
+				"url": {
+					"raw": "https://auth-195701.appspot.com/slips/{{newSlip}}",
+					"protocol": "https",
+					"host": [
+						"auth-195701",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"slips",
+						"{{newSlip}}"
+					]
+				},
+				"description": "Edits the slip added earlier in Create a slip\n\nExpected result: Slip #1 is rebranded as Slip #12. Our marketing agents say two digit slips are all the rage among boaters.\n\nTesting for this function also tests the GET /slips/{slip id} function."
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a boat",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "d280f841-6017-4733-884b-a9f3a76cd7f5",
+						"type": "text/javascript",
+						"exec": [
+							"pm.sendRequest(\"https://auth-195701.appspot.com/boats\", function (err, response) {",
+							"    console.log(response.json());",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "0ca2b053-d45f-4296-a4a9-f4fc3a11c977",
+						"type": "text/javascript",
+						"exec": [
+							"pm.sendRequest(\"https://auth-195701.appspot.com/boats\", function (err, response) {",
+							"    console.log(response.json());",
+							"});",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"token\":\"{{workingToken}}\"\n}"
+				},
+				"url": {
+					"raw": "https://auth-195701.appspot.com/boats/{{newBoat}}",
+					"protocol": "https",
+					"host": [
+						"auth-195701",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"boats",
+						"{{newBoat}}"
+					]
+				},
+				"description": "Deletes the boat added earlier in Create a boat"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a slip",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2cce693e-29ed-49e0-aaae-c5bf4d012c8a",
+						"type": "text/javascript",
+						"exec": [
+							"pm.sendRequest(\"https://auth-195701.appspot.com/slips\", function (err, response) {",
+							"    console.log(response.json());",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "49851bf5-330a-4790-aecf-8462b25299aa",
+						"type": "text/javascript",
+						"exec": [
+							"pm.sendRequest(\"https://auth-195701.appspot.com/slips\", function (err, response) {",
+							"    console.log(response.json());",
+							"});",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"token\":\"{{workingToken}}\"\n}"
+				},
+				"url": {
+					"raw": "https://auth-195701.appspot.com/slips/{{newSlip}}",
+					"protocol": "https",
+					"host": [
+						"auth-195701",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"slips",
+						"{{newSlip}}"
+					]
+				},
+				"description": "Deletes the slip added earlier in Create a slip"
+			},
+			"response": []
+		},
+		{
+			"name": "Dock boat",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"boat_id\":\"{{newBoat}}\",\n\t\"arrival_date\":\"February 30th\",\n\t\"token\":\"{{workingToken}}\"\n}"
+				},
+				"url": {
+					"raw": "https://auth-195701.appspot.com/slips/{{newSlip}}/boat",
+					"protocol": "https",
+					"host": [
+						"auth-195701",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"slips",
+						"{{newSlip}}",
+						"boat"
+					]
+				},
+				"description": "Docks a boat"
+			},
+			"response": []
+		},
+		{
+			"name": "Get all boats",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c29af9f5-426b-4595-bea0-c5aeabfe193c",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://auth-195701.appspot.com/boats",
+					"protocol": "https",
+					"host": [
+						"auth-195701",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"boats"
+					]
+				},
+				"description": "Checking to ensure our new boat is deleted"
+			},
+			"response": []
+		},
+		{
+			"name": "Get all slips",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c29af9f5-426b-4595-bea0-c5aeabfe193c",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://auth-195701.appspot.com/slips",
+					"protocol": "https",
+					"host": [
+						"auth-195701",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"slips"
+					]
+				},
+				"description": "Checking to ensure our new slip is deleted"
+			},
+			"response": []
+		}
+	]
+}
